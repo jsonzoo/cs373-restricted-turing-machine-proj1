@@ -20,6 +20,7 @@ public class zhu_proj1 {
         String input = args[1]; // simulates input to automata
         int maxTransitions = Integer.parseInt(args[2]);
 
+
         // holds the states
         int startState = -1; // only ONE start state
 
@@ -74,7 +75,6 @@ public class zhu_proj1 {
         };
         
         // Turing machine tape implementation with arraylist using input string
-
         List<Character> tape = new ArrayList<>();
         for (char c : input.toCharArray()) {
             tape.add(c);
@@ -83,44 +83,55 @@ public class zhu_proj1 {
         int state = startState;
         int steps = 0;
 
+      
         while (true) {  // until accept/reject state reached
+            
             if(acceptStates.contains(state)){
-                printOutput(tape, head, "ACCEPT");
+                printOutput(tape, head, "accept");
                 return;
             }
             if(rejectStates.contains(state)){ 
-                printOutput(tape, head, "REJECT");
+               
+                printOutput(tape, head, "reject");
                 return; 
             }
+            
             char a = ' ';
             if (head < tape.size()){
+                
                 a = tape.get(head);
+               
             }
-            // Transition tr = transFunc.get(state);
             Transition tr = transFunc.getOrDefault(state, Map.of()).get(a);
             if(tr == null){
-                return; // printOutput()
+                printOutput(tape, head, "reject");
+                return; 
             }
             //write
+           
+
             if(head == tape.size()){
-                if(tr.write != ' '){
-                    tape.add(tr.write);
-                }
+                tape.add(tr.write); 
+            }
                 else{
-                    tape.set(head, tr.write);
-                }
+                    tape.set(head, tr.write); 
+                
             }
             // move 
             if(tr.direction == 'L'){
-                if(head == 0){
-                    return; // crashed since -1:  printOutput()
-                }
                 head--; // move to left 
+                
+                if(head < 0){
+                    printOutput(tape, head, "crash");
+                    return; // crashed since -1: 
+                }
             } else if (tr.direction == 'R'){
                 head++;
             }
-            // switch to transition next stat
+            // switch to transition next state
+
             state = tr.nextState; 
+
             steps++;
             // quit if >= max
             if(steps >= maxTransitions) {
@@ -131,8 +142,10 @@ public class zhu_proj1 {
         }
            
      }
+
         static void printOutput(List<Character> tape, int head, String result){
             int start = head;
+            
             StringBuilder output = new StringBuilder();
             // String from head until ' '
             for(int i  = start; ;i++){
@@ -141,11 +154,11 @@ public class zhu_proj1 {
                     break;
                 }
                 output.append(c);
-                System.out.println(output.toString() + " " + result);
 
             }
+            System.out.println(output.toString() + " " + result);
         }
 
 
-        
+ 
     } 
